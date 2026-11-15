@@ -104,6 +104,7 @@ app.use("/",userRouter);
   });
 
   app.use((err,req,res,next) => {
+    console.log("ERROR",err);
     let {statusCode=500, message="something went wrong"} = err;
     res.status(statusCode).render("users/Error.ejs",{message});
     //res.status(statusCode).send(message);
