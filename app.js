@@ -1,9 +1,6 @@
 if(process.env.NODE_ENV != "production"){
   require("dotenv").config();
 }
-
-console.log(process.env.SECRET);
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -13,7 +10,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
-//const MongoStore = require("connect-mongo");
+const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const LocalStrategy =  require("passport-local");
 const User = require("./models/user.js");
@@ -34,7 +31,7 @@ main()
 });
 
 async function main() {
-                         //dbUrl
+                        
   await mongoose.connect(dbUrl);
 }
 
@@ -106,7 +103,21 @@ app.use("/",userRouter);
     //res.status(statusCode).send(message);
   });
 
-app.listen(8080, () => {
-  console.log("server is listening to port 8080");
-}); 
+const PORT = process.env.PORT || 8080;
 
+async function startServer() {
+  try {
+    await mongoose.connect(dbUrl);
+    console.log("Connected to MongoDB Atlas");
+
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port ${PORT}`);
+    });
+
+  } catch (err) {
+    console.error("Database connection failed:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
